@@ -6,6 +6,7 @@ from notification_service.config import settings
 
 logger = logging.getLogger("uvicorn")
 
+
 class EventConsumerListener:
     def __init__(self):
         self.connection = None
@@ -16,13 +17,17 @@ class EventConsumerListener:
     async def process_message(self, message: aio_pika.IncomingMessage):
         async with message.process():
             event_data = json.loads(message.body.decode("utf-8"))
-            logger.info(f"Получено событие: {message.routing_key}, {event_data['id']}, {event_data['name']}, {event_data['email']}")
+            logger.info(
+                f"> Получено событие: {message.routing_key}, {event_data['id']}, {event_data['name']}, {event_data['email']}"
+            )
             await asyncio.sleep(10)
-    
+
     async def connect(self):
         self.connection = await aio_pika.connect_robust(settings.rabbitmq_url)
         self.channel = await self.connection.channel()
-        self.exchange = await self.channel.declare_exchange("user.exchange", aio_pika.ExchangeType.TOPIC, durable=True)
+        self.exchange = await self.channel.declare_exchange(
+            "user.exchange", aio_pika.ExchangeType.TOPIC, durable=True
+        )
         self.queue = await self.channel.declare_queue("user.events", durable=True)
         await self.queue.bind(self.exchange, routing_key="user.#")
         logger.info("Notification Service listener запущен")
@@ -35,5 +40,6 @@ class EventConsumerListener:
         if self.connection:
             await self.connection.close()
         logger.info("Listener остановлен")
+
 
 listener = EventConsumerListener()

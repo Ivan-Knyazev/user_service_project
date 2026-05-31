@@ -10,6 +10,7 @@ from user_service.schemas import UserDTO
 logger = logging.getLogger("uvicorn")
 redis_client = aioredis.from_url(settings.redis_url, decode_responses=True)
 
+
 class UserCacheService:
     def __init__(self, redis: aioredis.Redis):
         self.redis = redis
@@ -26,13 +27,12 @@ class UserCacheService:
 
     async def save_to_cache(self, user: UserDTO):
         await self.redis.set(
-            f"{self.cache_prefix}{user.id}",
-            user.model_dump_json(),
-            ex=self.ttl
+            f"{self.cache_prefix}{user.id}", user.model_dump_json(), ex=self.ttl
         )
 
     async def remove_from_cache(self, user_id: uuid.UUID):
         await self.redis.delete(f"{self.cache_prefix}{user_id}")
+
 
 def get_cache_service():
     return UserCacheService(redis_client)

@@ -3,11 +3,14 @@ from sqlalchemy.orm import declarative_base
 
 from user_service.config import settings
 
-engine = create_async_engine(settings.database_url, echo=True)
+engine = create_async_engine(settings.database_url)  # echo=True
 
-AsyncSessionLocal = async_sessionmaker(bind=engine, class_=AsyncSession, expire_on_commit=False)
+AsyncSessionLocal = async_sessionmaker(
+    bind=engine, class_=AsyncSession, expire_on_commit=False
+)
 
 Base = declarative_base()
+
 
 async def get_db():
     async with AsyncSessionLocal() as session:

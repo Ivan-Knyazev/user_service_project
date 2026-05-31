@@ -5,12 +5,14 @@ from contextlib import asynccontextmanager
 
 from notification_service.rabbitmq import listener
 
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await listener.connect()
     await listener.consume_events()
     yield
     await listener.close()
+
 
 app = FastAPI(title="Notification Service", lifespan=lifespan)
 

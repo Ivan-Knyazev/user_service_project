@@ -3,8 +3,9 @@ from eventsourcing.projection import Projection
 from balance_service.domain import Wallet
 from balance_service.view import CustomPostgresWalletView
 
+
 class WalletProjection(Projection[CustomPostgresWalletView]):
-    #topics = ("Wallet.Created", "Wallet.Deposited", "Wallet.Withdrawn")
+    # topics = ("Wallet.Created", "Wallet.Deposited", "Wallet.Withdrawn")
 
     @singledispatchmethod
     def process_event(self, event, tracking):
@@ -15,7 +16,7 @@ class WalletProjection(Projection[CustomPostgresWalletView]):
         self.view.create_wallet(
             wallet_id=str(event.originator_id),
             timestamp=event.timestamp,
-            tracking=tracking
+            tracking=tracking,
         )
 
     @process_event.register
@@ -24,7 +25,7 @@ class WalletProjection(Projection[CustomPostgresWalletView]):
             wallet_id=str(event.originator_id),
             amount=event.amount,
             timestamp=event.timestamp,
-            tracking=tracking
+            tracking=tracking,
         )
 
     @process_event.register
@@ -33,5 +34,5 @@ class WalletProjection(Projection[CustomPostgresWalletView]):
             wallet_id=str(event.originator_id),
             amount=event.amount,
             timestamp=event.timestamp,
-            tracking=tracking
+            tracking=tracking,
         )
