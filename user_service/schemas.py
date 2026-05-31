@@ -1,0 +1,25 @@
+from typing import Optional
+import uuid
+
+from pydantic import BaseModel, EmailStr
+
+class UserCreateDTO(BaseModel):
+    name: str
+    email: EmailStr
+
+class UserUpdateDTO(BaseModel):
+    name: Optional[str] = None
+    email: Optional[EmailStr] = None
+
+class UserCreatedEvent(BaseModel):
+    id: uuid.UUID
+    email: EmailStr
+    name: str
+
+class UserDTO(BaseModel):
+    id: uuid.UUID
+    name: str
+    email: EmailStr
+
+    class Config:
+        from_attributes = True
